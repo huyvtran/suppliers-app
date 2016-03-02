@@ -9,8 +9,9 @@
  */
 angular
     .module('vendorConsoleApp', [
-        'ionic',
+      'ionic',
       'templatesCache',
+      'ngCordova',
       'oc.lazyLoad',
       'angular-loading-bar',
       'ui.router',
@@ -26,42 +27,96 @@ angular
       // "host": "",  //本地   http://192.168.1.114
       // "environment": "develop"
     })
-    .run(function () {
+    .run(function ($ionicPlatform,$cordovaFile,$cordovaFileOpener2,$cordovaFileTransfer,$ionicPopup,$ionicLoading) {
 
-      var fs = new CordovaPromiseFS({
-        Promise: Promise
+      $ionicPlatform.ready(function () {
+        if(ionic.Platform.isAndroid()){
+          cordova.getAppVersion.getVersionCode(function (versionCode) {
+              var curVersionCode = 18;
+              if(versionCode < curVersionCode){
+                    var cancelText = "取消";
+                    $ionicPopup.confirm({
+                        template: '<center>版本已最新,是否升级？</center>',
+                        cancelText: cancelText, cancelType: 'button-default',
+                        okText: '升级', okType: 'button-assertive'
+                    }).then(function (res) {
+                        if (res) {
+                            $ionicLoading.show({template: "已经下载：0%"});
+                            var url = "http://115.28.66.10:9090/cgwy_verdor_28.apk";
+                            var targetPath = cordova.file.externalApplicationStorageDirectory + 'cgwy/cgwy_' + curVersionCode + '.apk';
+                            var trustHosts = true;
+                            var options = {};
+                            $cordovaFileTransfer.download(url, targetPath, options, trustHosts)
+                                .then(function (result) {
+                                    // 打开下载下来的APP
+                                    $cordovaFileOpener2.open(targetPath, 'application/vnd.android.package-archive')
+                                        .then(function () {
+                                        }, function (err) {
+                                            $ionicPopup.alert({template: '<center>文件打开失败,请稍后重试!</center>', okText: '确定', okType: 'button-light'});
+                                            $ionicLoading.hide();
+                                        });
+                                    $ionicLoading.hide();
+                                }, function (err) {
+                                    $ionicPopup.alert({template: '<center>当前网络不稳定,下载失败!</center>', okText: '确定', okType: 'button-light'});
+                                    $ionicLoading.hide();
+                                }, function (progress) {
+                                    $timeout(function () {
+                                        var downloadProgress = (progress.loaded / progress.total) * 100;
+                                        $ionicLoading.show({template: "已经下载：" + Math.floor(downloadProgress) + "%"});
+                                        if (downloadProgress > 99) {
+                                            $ionicLoading.hide();
+                                        }
+                                    })
+                                });
+                        } else {
+                            //取消或者退出
+                            //if(ver.forceUpdate == true)
+                            //    ionic.Platform.exitApp();
+                            return;
+                        }
+                    });
+              }else{
+                alert("升级");
+                //var fs = new CordovaPromiseFS({
+                //  Promise: Promise
+                //});
+                //
+                //var loader = new CordovaAppLoader({
+                //  fs: fs,
+                //  serverRoot: 'http://vendor.canguanwuyou.cn/vendor/',//http://115.28.66.10/vendor/
+                //  localRoot: 'app',
+                //  cacheBuster: true,
+                //  checkTimeout: 10000,
+                //  mode: 'mirror',
+                //  manifest: 'manifest.json' + "?" + Date.now()
+                //});
+                //
+                //alert(fs);
+                //function check(){
+                //  alert(JSON.stringify(loader));
+                //  loader.check()
+                //      .then(function(){
+                //        alert("check")
+                //        console.log("-----into check ---------");
+                //        return loader.download();
+                //      })
+                //      .then(function(){
+                //        alert("download");
+                //        console.log("--------into download ---------");
+                //        return loader.update();
+                //      },function(err){
+                //        alert("error");
+                //        console.error('Auto-update error:',err);
+                //      });
+                //}
+                //
+                //check();
+
+              }
+          });
+
+        }
       });
-
-      var loader = new CordovaAppLoader({
-        fs: fs,
-        serverRoot: 'http://vendor.canguanwuyou.cn/vendor/',//http://115.28.66.10/vendor/
-        localRoot: 'app',
-        cacheBuster: true,
-        checkTimeout: 10000,
-        mode: 'mirror',
-        manifest: 'manifest.json' + "?" + Date.now()
-      });
-
-      alert(fs);
-      function check(){
-        alert(JSON.stringify(loader));
-        loader.check()
-            .then(function(){
-              alert("check")
-              console.log("-----into check ---------");
-              return loader.download();
-            })
-            .then(function(){
-              alert("download");
-              console.log("--------into download ---------");
-              return loader.update();
-            },function(err){
-              alert("error");
-              console.error('Auto-update error:',err);
-            });
-      }
-
-      check();
     })
     .config(['$stateProvider', '$urlRouterProvider', '$ocLazyLoadProvider', '$locationProvider', '$httpProvider', '$provide',
       function ($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, $locationProvider, $httpProvider, $provide) {
