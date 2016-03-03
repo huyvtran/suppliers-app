@@ -33,7 +33,7 @@ angular
             if (ionic.Platform.isAndroid()) {
 
                 cordova.getAppVersion.getVersionCode(function (versionCode) {
-                    var curVersionCode = 28;
+                    var curVersionCode = 18;
                     if (versionCode < curVersionCode) {
                         ConfirmModalDialogService.AsyncConfirmYesNo("版本有更新，是否需要升级？",
                             function () {
@@ -65,19 +65,19 @@ angular
                         );
                     } else {
 
-                        if (NetworkUtil.getNetworkRs()) {
-                            var updateObject = function () {
-                                UpdateService.updateApp().then(function (result) {
-                                    if (result == 2) {
-                                        ConfirmModalDialogService.AsyncConfirmYesNo("数据更新失败是否需要重试?",
-                                        function(){
-                                            updateObject();
-                                        });
-                                    }
-                                });
-                            }
-                            updateObject();
-                        }
+                        //if (NetworkUtil.getNetworkRs()) {
+                        //    var updateObject = function () {
+                        //        UpdateService.updateApp().then(function (result) {
+                        //            if (result == 2) {
+                        //                ConfirmModalDialogService.AsyncConfirmYesNo("数据更新失败是否需要重试?",
+                        //                function(){
+                        //                    updateObject();
+                        //                });
+                        //            }
+                        //        });
+                        //    }
+                        //    updateObject();
+                        //}
                     }
                 });
 
