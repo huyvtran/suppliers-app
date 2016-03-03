@@ -46,6 +46,7 @@ angular.module('vendorConsoleApp')
 		service.AsyncDialogHide = function(){
 			var dialogModal = $("#dialogModal");
 			dialogModal.modal('hide');
+			$("body .modal-backdrop").remove();
 		}
 		return service;
 	});

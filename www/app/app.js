@@ -56,15 +56,12 @@ angular
                                             var downloadProgress = (progress.loaded / progress.total) * 100;
                                             var msg = "已经下载:" + Math.floor(downloadProgress) + "%";
                                             ConfirmModalDialogService.AsyncDialogShow("下载进度" , msg);
-                                            //$("#downloadProgressMessage").innerText("已经下载:"+Math.floor(downloadProgress) + "%");
-                                            //$ionicLoading.show({template: "<div style='font-size: 16px; height:50px; line-height:50px;font-weight:bold; color:red;margin: 50px;8%;0 8%;text-align: center; border: 2px solid red;border-radius: 5px;'>已经下载:" + Math.floor(downloadProgress) + "%" + "</div>"});
-                                            if (downloadProgress > 99) {
-                                                ConfirmModalDialogService.hide();
+                                            if (downloadProgress >= 99) {
+                                                ConfirmModalDialogService.AsyncDialogHide();
                                             }
                                         })
                                     });
                             }
-
                         );
                     } else {
 
