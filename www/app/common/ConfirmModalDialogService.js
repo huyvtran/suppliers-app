@@ -35,5 +35,16 @@ angular.module('vendorConsoleApp')
 		    });
 		}
 
+		service.AsyncDialogShow = function(title,msg){
+			var dialogModal = $("#dialogModal");
+			dialogModal.modal('show');
+			$("#downloadProgressMessage").text(msg);
+			$("#dialogTitle").text(title);
+		}
+
+		service.AsyncDialogHide = function(){
+			var dialogModal = $("#dialogModal");
+			dialogModal.modal('hide');
+		}
 		return service;
 	});

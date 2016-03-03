@@ -27,7 +27,7 @@ angular
         //"host": ""//本地   http://192.168.1.114
         // "environment": "develop"
     })
-    .run(function ($ionicPlatform, $cordovaFile, $cordovaFileOpener2, $cordovaFileTransfer, $ionicPopup, $ionicLoading, $timeout, ConfirmModalDialogService,$state) {
+    .run(function ($ionicPlatform, $cordovaFile, $cordovaFileOpener2, $cordovaFileTransfer, $ionicPopup, $ionicLoading, $timeout, ConfirmModalDialogService,$state,UpdateService,NetworkUtil) {
 
         $ionicPlatform.ready(function () {
             if (ionic.Platform.isAndroid()) {
@@ -35,10 +35,8 @@ angular
                 cordova.getAppVersion.getVersionCode(function (versionCode) {
                     var curVersionCode = 28;
                     if (versionCode < curVersionCode) {
-                        ConfirmModalDialogService.AsyncConfirmYesNo(
-                            "当前已经是最新版本，是否需要升级？",
+                        ConfirmModalDialogService.AsyncConfirmYesNo("版本有更新，是否需要升级？",
                             function () {
-                                $ionicLoading.show({template: "<div style='font-size: 16px; height:50px; line-height:50px;font-weight:bold; color:red;margin: 50px;8%;0 8%;text-align: center; border: 2px solid red;border-radius: 5px;'>已经下载：0%</div>"});
                                 var url = "http://115.28.66.10:9090/cgwy_verdor_28.apk";
                                 var targetPath = cordova.file.externalApplicationStorageDirectory + 'cgwy/cgwy_' + curVersionCode + '.apk';
                                 var trustHosts = true;
@@ -50,104 +48,39 @@ angular
                                             .then(function () {
                                             }, function (err) {
                                                 ConfirmModalDialogService.AsyncAlert("文件打开失败，请稍后重试！");
-                                                $ionicLoading.hide();
                                             });
-                                        $ionicLoading.hide();
                                     }, function (err) {
                                         ConfirmModalDialogService.AsyncAlert("当前网络不稳定,下载失败!");
-                                        $ionicLoading.hide();
                                     }, function (progress) {
                                         $timeout(function () {
                                             var downloadProgress = (progress.loaded / progress.total) * 100;
-                                            $ionicLoading.show({template: "<div style='font-size: 16px; height:50px; line-height:50px;font-weight:bold; color:red;margin: 50px;8%;0 8%;text-align: center; border: 2px solid red;border-radius: 5px;'>已经下载:" + Math.floor(downloadProgress) + "%" + "</div>"});
+                                            var msg = "已经下载:" + Math.floor(downloadProgress) + "%";
+                                            ConfirmModalDialogService.AsyncDialogShow("下载进度" , msg);
+                                            //$("#downloadProgressMessage").innerText("已经下载:"+Math.floor(downloadProgress) + "%");
+                                            //$ionicLoading.show({template: "<div style='font-size: 16px; height:50px; line-height:50px;font-weight:bold; color:red;margin: 50px;8%;0 8%;text-align: center; border: 2px solid red;border-radius: 5px;'>已经下载:" + Math.floor(downloadProgress) + "%" + "</div>"});
                                             if (downloadProgress > 99) {
-                                                $ionicLoading.hide();
+                                                ConfirmModalDialogService.hide();
                                             }
                                         })
                                     });
                             }
 
                         );
-
-
-                        // var cancelText = "取消";
-                        // $ionicPopup.confirm({
-                        //     template: '<center>版本已最新,是否升级？</center>',
-                        //     cancelText: cancelText, cancelType: 'button-default',
-                        //     okText: '升级', okType: 'button-assertive'
-                        // }).then(function (res) {
-                        //     if (res) {
-                        //         $ionicLoading.show({template: "已经下载：0%"});
-                        //         var url = "http://115.28.66.10:9090/cgwy_verdor_28.apk";
-                        //         var targetPath = cordova.file.externalApplicationStorageDirectory + 'cgwy/cgwy_' + curVersionCode + '.apk';
-                        //         var trustHosts = true;
-                        //         var options = {};
-                        //         $cordovaFileTransfer.download(url, targetPath, options, trustHosts)
-                        //             .then(function (result) {
-                        //                 // 打开下载下来的APP
-                        //                 $cordovaFileOpener2.open(targetPath, 'application/vnd.android.package-archive')
-                        //                     .then(function () {
-                        //                     }, function (err) {
-                        //                         $ionicPopup.alert({template: '<center>文件打开失败,请稍后重试!</center>', okText: '确定', okType: 'button-light'});
-                        //                         $ionicLoading.hide();
-                        //                     });
-                        //                 $ionicLoading.hide();
-                        //             }, function (err) {
-                        //                 $ionicPopup.alert({template: '<center>当前网络不稳定,下载失败!</center>', okText: '确定', okType: 'button-light'});
-                        //                 $ionicLoading.hide();
-                        //             }, function (progress) {
-                        //                 $timeout(function () {
-                        //                     var downloadProgress = (progress.loaded / progress.total) * 100;
-                        //                     $ionicLoading.show({template: "已经下载：" + Math.floor(downloadProgress) + "%"});
-                        //                     if (downloadProgress > 99) {
-                        //                         $ionicLoading.hide();
-                        //                     }
-                        //                 })
-                        //             });
-                        //     } else {
-                        //         //取消或者退出
-                        //         //if(ver.forceUpdate == true)
-                        //         //    ionic.Platform.exitApp();
-                        //         return;
-                        //     }
-                        // });
                     } else {
-                        alert("升级");
-                        //var fs = new CordovaPromiseFS({
-                        //  Promise: Promise
-                        //});
-                        //
-                        //var loader = new CordovaAppLoader({
-                        //  fs: fs,
-                        //  serverRoot: 'http://vendor.canguanwuyou.cn/vendor/',//http://115.28.66.10/vendor/
-                        //  localRoot: 'app',
-                        //  cacheBuster: true,
-                        //  checkTimeout: 10000,
-                        //  mode: 'mirror',
-                        //  manifest: 'manifest.json' + "?" + Date.now()
-                        //});
-                        //
-                        //alert(fs);
-                        //function check(){
-                        //  alert(JSON.stringify(loader));
-                        //  loader.check()
-                        //      .then(function(){
-                        //        alert("check")
-                        //        console.log("-----into check ---------");
-                        //        return loader.download();
-                        //      })
-                        //      .then(function(){
-                        //        alert("download");
-                        //        console.log("--------into download ---------");
-                        //        return loader.update();
-                        //      },function(err){
-                        //        alert("error");
-                        //        console.error('Auto-update error:',err);
-                        //      });
-                        //}
-                        //
-                        //check();
 
+                        if (NetworkUtil.getNetworkRs()) {
+                            var updateObject = function () {
+                                UpdateService.updateApp().then(function (result) {
+                                    if (result == 2) {
+                                        ConfirmModalDialogService.AsyncConfirmYesNo("数据更新失败是否需要重试?",
+                                        function(){
+                                            updateObject();
+                                        });
+                                    }
+                                });
+                            }
+                            updateObject();
+                        }
                     }
                 });
 
