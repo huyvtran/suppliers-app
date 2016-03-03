@@ -37,6 +37,7 @@ angular.module('vendorConsoleApp')
 
 		service.AsyncDialogShow = function(title,msg){
 			var dialogModal = $("#dialogModal");
+			dialogModal.modal({backdrop: 'static', keyboard: false});
 			dialogModal.modal('show');
 			$("#downloadProgressMessage").text(msg);
 			$("#dialogTitle").text(title);
