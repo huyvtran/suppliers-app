@@ -22,9 +22,9 @@ angular
     ])
     .constant('apiConfig', {
         //"host": "http://115.28.66.10"  //线上
-        //"host": "http://vendor.canguanwuyou.cn"
-        "host": "http://115.28.64.174"  //测试
-        //"host": ""//本地   http://192.168.1.114
+        "host": "http://vendor.canguanwuyou.cn"
+        //"host": "http://115.28.64.174",  //测试
+        //"host": ""
         // "environment": "develop"
     })
     .run(function ($ionicPlatform, $cordovaFile, $cordovaFileOpener2, $cordovaFileTransfer, $ionicPopup, $ionicLoading, $timeout, ConfirmModalDialogService,$state,UpdateService,NetworkUtil) {
@@ -33,12 +33,12 @@ angular
             if (ionic.Platform.isAndroid()) {
 
                 cordova.getAppVersion.getVersionCode(function (versionCode) {
-                    var curVersionCode = 18;
-                    if (versionCode < curVersionCode) {
+                    var newVersionCode = 18;
+                    if (versionCode < newVersionCode) {
                         ConfirmModalDialogService.AsyncConfirmYesNo("版本有更新，是否需要升级？",
                             function () {
-                                var url = "http://115.28.66.10:9090/cgwy_verdor_28.apk";
-                                var targetPath = cordova.file.externalApplicationStorageDirectory + 'cgwy/cgwy_' + curVersionCode + '.apk';
+                                var url = "http://115.28.66.10:9090/cgwy_vendor.apk";
+                                var targetPath = cordova.file.externalApplicationStorageDirectory + 'cgwy/cgwy_' + newVersionCode + '.apk';
                                 var trustHosts = true;
                                 var options = {};
                                 $cordovaFileTransfer.download(url, targetPath, options, trustHosts)
@@ -65,19 +65,19 @@ angular
                         );
                     } else {
 
-                        //if (NetworkUtil.getNetworkRs()) {
-                        //    var updateObject = function () {
-                        //        UpdateService.updateApp().then(function (result) {
-                        //            if (result == 2) {
-                        //                ConfirmModalDialogService.AsyncConfirmYesNo("数据更新失败是否需要重试?",
-                        //                function(){
-                        //                    updateObject();
-                        //                });
-                        //            }
-                        //        });
-                        //    }
-                        //    updateObject();
-                        //}
+                        if (NetworkUtil.getNetworkRs()) {
+                            var updateObject = function () {
+                                UpdateService.updateApp().then(function (result) {
+                                    if (result == 2) {
+                                        ConfirmModalDialogService.AsyncConfirmYesNo("数据更新失败是否需要重试?",
+                                        function(){
+                                            updateObject();
+                                        });
+                                    }
+                                });
+                            }
+                            updateObject();
+                        }
                     }
                 });
 

@@ -6,7 +6,7 @@ angular.module('vendorConsoleApp')
 
         var loader = new CordovaAppLoader({
             fs: fs,
-            serverRoot: 'http://115.28.66.10/vendor/',
+            serverRoot: 'http://vendor.canguanwuyou.cn/vendor/',
             localRoot: 'app',
             cacheBuster: true, // make sure we're not downloading cached files.
             checkTimeout: 10000, // timeout for the "check" function - when you loose internet connection
