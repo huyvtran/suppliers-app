@@ -33,11 +33,11 @@ angular
             if (ionic.Platform.isAndroid()) {
 
                 cordova.getAppVersion.getVersionCode(function (versionCode) {
-                    var newVersionCode = 18;
+                    var newVersionCode = 28;
                     if (versionCode < newVersionCode) {
                         ConfirmModalDialogService.AsyncConfirmYesNo("版本有更新，是否需要升级？",
                             function () {
-                                var url = "http://115.28.66.10:9090/download/cgwy_suppliers.apk";
+                                var url = "http://download.canguanwuyou.cn/download/cgwy_suppliers.apk";
                                 var targetPath = cordova.file.externalApplicationStorageDirectory + 'cgwy/cgwy_suppliers_' + newVersionCode + '.apk';
                                 var trustHosts = true;
                                 var options = {};
