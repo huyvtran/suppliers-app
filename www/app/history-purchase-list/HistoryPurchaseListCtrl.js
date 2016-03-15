@@ -7,7 +7,7 @@
  * Controller of the vendorConsoleApp
  */
 angular.module('vendorConsoleApp')
-	.controller('HistoryPurchaseListCtrl', function($scope, $http, $filter, $stateParams, $location, apiConfig, ConfirmModalDialogService) {
+	.controller('HistoryPurchaseListCtrl', function($state,$scope, $http, $filter, $stateParams, $location, apiConfig, ConfirmModalDialogService) {
 
 		$scope.searchForm = {
 			page : $stateParams.page,
@@ -45,6 +45,7 @@ angular.module('vendorConsoleApp')
             startWeek: 1
         };
 
+
         $scope.$watch('startDate', function(newVal) {
             $scope.searchForm.start = $filter('date')(newVal, 'yyyy-MM-dd');
         });
@@ -61,31 +62,36 @@ angular.module('vendorConsoleApp')
             $scope.endDate = Date.parse($scope.searchForm.end);
         }
 
-        $http({
-            url: apiConfig.host + "/admin/vendor-api/vendor/order/history",
-            method: "GET",
-            params: $scope.searchForm
-        })
-        .success(function (data, status) {
-            // console.log(data);
-            $scope.historyPurchaseLists = data.content;
+        function search() {
+            $http({
+                url: apiConfig.host + "/admin/vendor-api/vendor/order/history",
+                method: "GET",
+                params: $scope.searchForm
+            })
+                .success(function (data, status) {
+                    // console.log(data);
+                    $scope.historyPurchaseLists = data.content;
 
-            $scope.showLoading = false;
+                    $scope.showLoading = false;
 
-            /*分页数据*/
-            $scope.page.itemsPerPage = data.pageSize;
-            $scope.page.totalItems = data.total;
-            $scope.page.currentPage = data.page + 1;
-        })
-        .error(function (data, status) {
-            ConfirmModalDialogService.AsyncAlert("获取历史数据失败");
-            $scope.showLoading = false;
-        });
 
+                    /*分页数据*/
+                    $scope.page.itemsPerPage = data.pageSize;
+                    $scope.page.totalItems = data.total;
+                    $scope.page.currentPage = data.page + 1;
+                })
+                .error(function (data, status) {
+                    ConfirmModalDialogService.AsyncAlert("获取历史数据失败");
+                    $scope.showLoading = false;
+                });
+        }
+
+
+        search();
         $scope.resetPageAndSearch = function () {
             $scope.searchForm.page = 0;
             $scope.searchForm.pageSize = 50;
-
+            //$state.go("history-purchase-list",$scope.searchForm);
             $location.search($scope.searchForm);
         };
 
@@ -93,7 +99,8 @@ angular.module('vendorConsoleApp')
             $scope.searchForm.page = $scope.page.currentPage - 1;
             $scope.searchForm.pageSize = $scope.page.itemsPerPage;
 
-            $location.search($scope.searchForm);
+            //$location.search($scope.searchForm);
+            search();
         }
 
  	});
