@@ -7,24 +7,25 @@
  * Controller of the vendorConsoleApp
  */
 angular.module('vendorConsoleApp')
-	.controller('HistoryPurchaseListCtrl', function($state,$scope, $http, $filter, $stateParams, $location, apiConfig, ConfirmModalDialogService) {
+    .controller('HistoryPurchaseListCtrl', function($state,$scope, $http, $filter, $stateParams, $location, apiConfig, ConfirmModalDialogService) {
 
-		$scope.searchForm = {
-			page : $stateParams.page,
+        $scope.searchForm = {
+            page : $stateParams.page,
             pageSize : $stateParams.pageSize,
             start : $stateParams.start,
             end : $stateParams.end
-		};
+        };
 
-		$scope.format = 'yyyy-MM-dd';
+
+        $scope.format = 'yyyy-MM-dd';
 
         $scope.showLoading = true;
 
-		$scope.page = {
+        $scope.page = {
             itemsPerPage : 50
         };
 
-		$scope.openStart = function ($event) {
+        $scope.openStart = function ($event) {
             $event.preventDefault();
             $event.stopPropagation();
             $scope.openedEnd = false;
@@ -73,6 +74,8 @@ angular.module('vendorConsoleApp')
                     $scope.historyPurchaseLists = data.content;
 
                     $scope.showLoading = false;
+                    $scope.amount = Number(data.amount.toString().match(/^\d+(?:\.\d{0,2})?/));
+
 
 
                     /*分页数据*/
@@ -103,31 +106,31 @@ angular.module('vendorConsoleApp')
             search();
         }
 
- 	});
+    });
 
 //将时间控件的时间格式化为字符串
 angular.module('vendorConsoleApp')
-	.directive('dateForSearch', ['$filter', '$parse', function ($filter, $parse) {
-	    return {
-	        restrict: 'A',
-	        require: '^ngModel',
-	        link: function (scope, element, attrs, ctrl) {
-	            scope.$watch(attrs.ngModel, function (d) {
-	                if (d) {
-	                    if (angular.isDate(d)) {
-	                    } else {
-	                        d = Date.parse(d);
-	                    }
+    .directive('dateForSearch', ['$filter', '$parse', function ($filter, $parse) {
+        return {
+            restrict: 'A',
+            require: '^ngModel',
+            link: function (scope, element, attrs, ctrl) {
+                scope.$watch(attrs.ngModel, function (d) {
+                    if (d) {
+                        if (angular.isDate(d)) {
+                        } else {
+                            d = Date.parse(d);
+                        }
 
-	                    var modelGetter = $parse(attrs.ngModel);
-	                    var modelSetter = modelGetter.assign;
-	                    if (scope.submitDateFormat) {
-	                        modelSetter(scope, $filter('date')(d, scope.submitDateFormat));
-	                    } else {
-	                        modelSetter(scope, $filter('date')(d, 'yyyy-MM-dd'));
-	                    }
-	                }
-	            });
-	        }
-	    };
-}]);
+                        var modelGetter = $parse(attrs.ngModel);
+                        var modelSetter = modelGetter.assign;
+                        if (scope.submitDateFormat) {
+                            modelSetter(scope, $filter('date')(d, scope.submitDateFormat));
+                        } else {
+                            modelSetter(scope, $filter('date')(d, 'yyyy-MM-dd'));
+                        }
+                    }
+                });
+            }
+        };
+    }]);
